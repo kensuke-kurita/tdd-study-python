@@ -1,24 +1,34 @@
 class TestCase:
   def __init__(self, name):
     self.name = name
+  def setUp(self):
+    pass
   def run(self):
+      self.setUp()
       method = getattr(self, self.name)
-#       print(self.name)
-      ## おもしろい。
       method()
 class WasRun(TestCase):
-  def __init__(self, name):
+  def setUp(self):
     self.wasRun = None
-    super().__init__(name)
+    self.wasSetUp = 1
   def testMethod(self):
     self.wasRun = 1
 
 class TestCaseTest(TestCase):
+  def setUp(self):
+    self.test = WasRun("testMethod")
   def testRunning(self):
-    test = WasRun("testMethod")
-    assert(not test.wasRun)
-    test.run()
-    assert(test.wasRun)
+    self.test.run()
+    assert(self.test.wasRun)
+  def testSetUp(self):
+    self.test.run()
+    assert(self.test.wasSetUp)
 
 TestCaseTest("testRunning").run()
+TestCaseTest("testSetUp").run()
 ## クラスを先に読み込んでいなかった。
+
+#- パフォーマンスと独立性
+#よく共通化しすぎてしまう。
+
+# テストがシンプルにできるのは、きちんと動作している他のテストがあるときだけ
